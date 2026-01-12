@@ -1,0 +1,327 @@
+:root {
+    --bg-color: #0d0d0d;
+    --text-color: #f0f0f0;
+    --accent-color: #ffffff;
+    --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    cursor: crosshair;
+}
+
+/* Subtle animated background gradient */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0d0d0d 100%);
+    z-index: -1;
+    animation: breathe 10s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+header {
+    padding: 4rem 2rem;
+    text-align: center;
+    opacity: 0;
+    animation: fadeInDown 1.5s ease-out forwards;
+}
+
+h1 {
+    font-weight: 300;
+    letter-spacing: 5px;
+    font-size: 2rem;
+    text-transform: lowercase;
+    opacity: 0.8;
+}
+
+.gallery-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    gap: 4rem;
+    /* Generous spacing for the 'dumped' feel */
+    padding-bottom: 10rem;
+}
+
+.photo-wrapper {
+    position: relative;
+    /* width and height set in JS for variety or fixed here */
+    width: 300px;
+    opacity: 0;
+    /* Hidden initially for scroll reveal */
+    transform: translateY(100px);
+    /* Start slightly down */
+    transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.photo-wrapper.in-view {
+    opacity: 1;
+    /* Transform is handled by JS to mix scroll reveal + random rotation */
+}
+
+.photo-card {
+    width: 100%;
+    height: auto;
+    /* Maintain aspect ratio */
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: brightness(0.9) grayscale(20%);
+    backface-visibility: hidden;
+    cursor: pointer;
+    /* Clickable */
+}
+
+/* Floating animation applied to the inner card so wrapper handles layout */
+.photo-card.floating {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Hover Effects */
+.photo-wrapper:hover .photo-card {
+    transform: scale(1.05) rotate(0deg) !important;
+    /* Reset rotation on hover */
+    filter: brightness(1.1) grayscale(0%);
+    box-shadow: 0 30px 60px rgba(255, 255, 255, 0.1);
+    z-index: 10;
+}
+
+/* Lightbox Styles */
+#lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#lightbox.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+#lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+#lightbox.active img {
+    transform: scale(1);
+}
+
+/* Animation Keyframes */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+/* Micro-interaction classes */
+.shake-effect {
+    animation: shake 0.5s;
+}
+
+@media (max-width: 768px) {
+    .gallery-container {
+        gap: 2rem;
+    }
+
+    .photo-wrapper {
+        width: 100%;
+        /* Full width on mobile */
+        max-width: 400px;
+    }
+}
+
+/* Mouse Trail */
+.trail {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: trailFade 0.8s ease-out forwards;
+    z-index: 9999;
+}
+
+@keyframes trailFade {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(0.2);
+        opacity: 0;
+    }
+}
+
+/* Video Section */
+.video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 4rem 0;
+    padding: 2rem;
+    opacity: 0;
+    animation: fadeInDown 1.5s ease-out 0.5s forwards;
+}
+
+.video-container video {
+    max-width: 800px;
+    width: 90%;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Corner Decorations */
+.corner-decor {
+    position: fixed;
+    width: 120px;
+    height: auto;
+    z-index: 900;
+    pointer-events: none;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.corner-tl {
+    top: 20px;
+    left: 20px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.corner-tr {
+    top: 20px;
+    right: 20px;
+    animation: float 5s ease-in-out infinite reverse;
+}
+
+.corner-bl {
+    bottom: 20px;
+    left: 20px;
+    animation: float 7s ease-in-out infinite;
+}
+
+.corner-br {
+    bottom: 20px;
+    right: 20px;
+    animation: float 4s ease-in-out infinite reverse;
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 1001;
+}
+
+.close-btn:hover {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
